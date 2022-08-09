@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
@@ -10,15 +10,18 @@ interface Author {
   name: string;
   role: string;
   avatarUrl: string;
+}
 
+interface Content {
+  type: "paragraph" | "link";
+  content: string;
 }
 
 interface PostProps {
   author: Author;
   publishedAt: Date;
-  content: string;
+  content: Content[];
 }
-
 
 export function Post({ author, publishedAt, content }: PostProps) {
   const [comments, setComments] = useState([
@@ -53,13 +56,11 @@ export function Post({ author, publishedAt, content }: PostProps) {
     setNewCommentText(event.target.value);
   }
 
-  
-
-  function handleNewCommentInvalid() {
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity("Por Favor preencha o campo");
   }
 
-  function deleteComment(commentToDelete) {
+  function deleteComment(commentToDelete: String) {
     const commentsWithoutDeletedOne = comments.filter((comment) => {
       return comment !== commentToDelete;
     });
